@@ -11,7 +11,7 @@ class MyHandler(BaseHTTPRequestHandler):
         data = json.loads(body)
         var1 = float(data['var1'])
         var2 = float(data['var2'])
-        print(f"Received variables: {var1}, {var2}")
+        print("Received variables: {var1}, {var2}")
 
         # Send a response
         self.send_response(200)
