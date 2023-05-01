@@ -22,6 +22,6 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         self.wfile.write(json.dumps(response))
 
 # Start the HTTP server
-server = BaseHTTPServer.HTTPServer(('localhost', 8000), MyHandler)
+server = BaseHTTPServer.HTTPServer(('', 8000), MyHandler)
 print('Server running on localhost:8000...')
 server.serve_forever()
