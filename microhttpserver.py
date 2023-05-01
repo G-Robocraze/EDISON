@@ -1,13 +1,32 @@
-import http.server
-import socketserver
+import BaseHTTPServer
+import SimpleHTTPServer
+import cgi
+import json
 
 PORT = 8000
 
-Handler = http.server.SimpleHTTPRequestHandler
+class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
+    def do_POST(self):
+        ctype, pdict = cgi.parse_header(self.headers['content-type'])
+        if ctype == 'application/json':
+            length = int(self.headers['content-length'])
+            data = self.rfile.read(length)
+            message = json.loads(data)
+            self.send_response(200)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            self.wfile.write(json.dumps(message))
+        else:
+            self.send_response(400)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            self.wfile.write('Invalid request')
 
-with socketserver.TCPServer(("", PORT), Handler) as httpd:
-    print("serving at port", PORT)
-    httpd.serve_forever()
+Handler = MyHandler
+
+httpd = BaseHTTPServer.HTTPServer(("", PORT), Handler)
+print "serving at port", PORT
+httpd.serve_forever()
 
 # import network
 # import machine
