@@ -11,8 +11,9 @@ class Server2Handler(BaseHTTPRequestHandler):
         json_data = self.rfile.read(content_length)
         print type(json_data)
         # data = json.loads(json_data)
-        message = json_data.get('message')
-        print 'Received message from Server 1:', message
+        # message = json_data.get('message')
+
+        print 'Received message from Server 1:', json_data
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
