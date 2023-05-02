@@ -19,6 +19,6 @@ class Server1Handler(BaseHTTPRequestHandler):
         content = response.read().decode('utf-8')
         print(content)
 
-server1 = HTTPServer(('localhost', 8080), Server1Handler)
+server1 = HTTPServer(('', 8080), Server1Handler)
 print('Starting Server 1...')
 server1.serve_forever()
