@@ -1,5 +1,5 @@
 import json
-from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
+from http.server import BaseHTTPRequestHandler, HTTPServer
 
 class Server2Handler(BaseHTTPRequestHandler):
     def do_POST(self):
@@ -11,8 +11,8 @@ class Server2Handler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
-        self.wfile.write('Hello from Server 2')
+        self.wfile.write('Hello from Server 2'.encode('utf-8'))
 
-server2 = HTTPServer(('', 8081), Server2Handler)
+server2 = HTTPServer(('localhost', 8081), Server2Handler)
 print('Starting Server 2...')
 server2.serve_forever()
