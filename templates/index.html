@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Flask Server</title>
+</head>
+<body>
+	<h1>Flask Server</h1>
+	<form method="POST" action="/">
+		<label for="message">Enter a message:</label><br>
+		<input type="text" id="message" name="message"><br>
+		<input type="submit" value="Send">
+	</form>
+	{% if response_message %}
+	<p>Response from Server 2: {{ response_message }}</p>
+	{% endif %}
+</body>
+</html>
