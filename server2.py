@@ -9,9 +9,8 @@ class Server2Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         content_length = int(self.headers['Content-Length'])
         json_data = self.rfile.read(content_length)
-        print type(json_data)
         data = json.loads(json_data)
-        message = data.get('value')
+        message = data.get('message')
 
         print 'Received message from Server 1:', message
         response = {'message': 'Hello from Server 2'}
