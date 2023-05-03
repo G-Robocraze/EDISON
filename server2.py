@@ -11,8 +11,9 @@ class Server2Handler(BaseHTTPRequestHandler):
         json_data = self.rfile.read(content_length)
         data = json.loads(json_data)
         message = data.get('message')
-
+        id = data.get('id')
         print 'Received message from Server 1:', message
+        print 'Received from: ', id
         response = {'message': 'Hello from Server 2'}
         response_json = json.dumps(response)
         self.send_response(200)
