@@ -13,7 +13,7 @@ def index():
         # Send a request to Server 2
         http_obj = httplib2.Http()
         url = 'http://192.168.43.67:8081/endpoint'
-        data = {'message': message}
+        data = {'message': message, 'id':'id'}
         headers = {'Content-type': 'application/json'}
         json_data = json.dumps(data)
         response, content = http_obj.request(url, 'POST', body=json_data, headers=headers)
