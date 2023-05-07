@@ -12,8 +12,16 @@ class Server2Handler(BaseHTTPRequestHandler):
         data = json.loads(json_data)
         message = data.get('message')
         id = data.get('id')
-        print 'Received message from Server 1:', message
-        print 'Received from: ', id
+        print 'Received message from', id, ':', message
+
+        # Forward the message to the esp32
+        # Modify the code below to fit the specific requirements of your esp32 communication protocol
+        import socket
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect(('<IP address of the esp32>', <port number>))
+        s.sendall(message)
+        s.close()
+
         response = {'message': 'Hello from Server 2'}
         response_json = json.dumps(response)
         self.send_response(200)
