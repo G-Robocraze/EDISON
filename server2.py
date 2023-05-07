@@ -18,7 +18,7 @@ class Server2Handler(BaseHTTPRequestHandler):
         # Modify the code below to fit the specific requirements of your esp32 communication protocol
         import socket
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect(('<IP address of the esp32>', <port number>))
+        s.connect(('10.0.2.118', 8080))
         s.sendall(message)
         s.close()
 
