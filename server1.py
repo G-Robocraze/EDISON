@@ -51,7 +51,7 @@ def send_data():
         json_data = json.dumps(data)
 
         # Send the data to the server
-        conn = httplib.HTTPConnection('localhost', 5000)
+        conn = httplib.HTTPConnection('', 5000)
         headers = {'Content-type': 'application/json'}
         conn.request('POST', '/endpoint', json_data, headers)
         response = conn.getresponse()
