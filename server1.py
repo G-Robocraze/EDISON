@@ -3,14 +3,19 @@ import time
 import httplib
 import json
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-
+voltage1 = None
+current1 = None
+energy1 = None
 class RequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         content_length = int(self.headers['Content-Length'])
         data = self.rfile.read(content_length)
         json_data = json.loads(data)
         print(json_data)  # Process the received JSON data as desired
-
+        if json_data.get('id') == 'load1':
+            voltage1 = json_data.get('voltage')
+            current1 = json_data.get('current')
+            energy1 = json_data.get('power')
         self.send_response(200)
         self.send_header('Content-type', 'text/plain')
         self.end_headers()
@@ -25,9 +30,9 @@ def run_server():
 def send_data():
     while True:
         # Generate random data
-        voltage1 = random.randint(220, 240)
-        current1 = random.randint(1, 10)
-        energy1 = voltage1 * current1
+        # voltage1 = random.randint(220, 240)
+        # current1 = random.randint(1, 10)
+        # energy1 = voltage1 * current1
         voltage2 = random.randint(220, 240)
         current2 = random.randint(1, 10)
         energy2 = voltage2 * current2
