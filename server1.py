@@ -6,9 +6,12 @@ from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 voltage1 = None
 current1 = None
 energy1 = None
+voltage2 = None
+current2 = None
+energy2 = None
 class RequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
-        global voltage1, current1, energy1
+        global voltage1, current1, energy1, voltage2, current2, energy2
         content_length = int(self.headers['Content-Length'])
         data = self.rfile.read(content_length)
         json_data = json.loads(data)
@@ -17,6 +20,10 @@ class RequestHandler(BaseHTTPRequestHandler):
             voltage1 = json_data.get('voltage')
             current1 = json_data.get('current')
             energy1 = json_data.get('power')
+        elif json_data.get('id') == 'load2':
+            voltage2 = json_data.get('voltage')
+            current2 = json_data.get('current')
+            energy2 = json_data.get('power')
         self.send_response(200)
         self.send_header('Content-type', 'text/plain')
         self.end_headers()
@@ -29,15 +36,15 @@ def run_server():
     httpd.serve_forever()
 
 def send_data():
-    global voltage1, current1, energy1
+    global voltage1, current1, energy1, voltage2, current2, energy2
     while True:
         # Generate random data
         # voltage1 = random.randint(220, 240)
         # current1 = random.randint(1, 10)
         # energy1 = voltage1 * current1
-        voltage2 = random.randint(220, 240)
-        current2 = random.randint(1, 10)
-        energy2 = voltage2 * current2
+        # voltage2 = random.randint(220, 240)
+        # current2 = random.randint(1, 10)
+        # energy2 = voltage2 * current2
         voltage3 = random.randint(220, 240)
         current3 = random.randint(1, 10)
         energy3 = voltage3 * current3
