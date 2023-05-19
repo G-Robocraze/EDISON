@@ -1,24 +1,12 @@
-import http.client
+from flask import Flask, request
 import json
-from http.server import BaseHTTPRequestHandler, HTTPServer
+app = Flask(__name__)
 
-class Server1Handler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        self.send_response(200)
-        self.send_header('Content-type', 'text/html')
-        self.end_headers()
-        self.wfile.write('Hello from Server 1'.encode('utf-8'))
+@app.route('/endpoint', methods=['POST'])
+def handle_data():
+    data = request.get_json(force=True)
+    print(data)  # Process the received JSON data as desired
+    return 'Data received successfully'
 
-        # Send a request to Server 2 on Edison
-        http_obj = http.client.HTTPConnection('192.168.43.67', 8081)
-        data = {'message': 'Hello from Server 1'}
-        headers = {'Content-type': 'application/json'}
-        json_data = json.dumps(data)
-        http_obj.request('POST', '/endpoint', json_data, headers)
-        response = http_obj.getresponse()
-        content = response.read().decode('utf-8')
-        print(content)
-
-server1 = HTTPServer(('', 8080), Server1Handler)
-print('Starting Server 1...')
-server1.serve_forever()
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
