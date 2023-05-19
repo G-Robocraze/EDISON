@@ -53,7 +53,7 @@ def send_data():
         # Send the data to the server
         conn = httplib.HTTPConnection('192.168.43.244', 5000)
         headers = {'Content-type': 'application/json'}
-        conn.request('POST', '/endpoint', json_data, headers)
+        conn.request('POST', '/receive_data', json_data, headers)
         response = conn.getresponse()
 
         if response.status == 200:
