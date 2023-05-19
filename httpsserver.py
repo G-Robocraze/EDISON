@@ -1,27 +1,50 @@
+import random
+import time
+import httplib
 import json
-import BaseHTTPServer
-import SimpleHTTPServer
 
-class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
-    def do_POST(self):
-        # Read the request body
-        content_length = int(self.headers.get('Content-Length', 0))
-        body = self.rfile.read(content_length)
+def send_data():
+    while True:
+        # Generate random data
+        voltage1 = random.randint(220, 240)
+        current1 = random.randint(1, 10)
+        energy1 = voltage1 * current1
+        voltage2 = random.randint(220, 240)
+        current2 = random.randint(1, 10)
+        energy2 = voltage2 * current2
+        voltage3 = random.randint(220, 240)
+        current3 = random.randint(1, 10)
+        energy3 = voltage3 * current3
 
-        # Parse the request JSON
-        data = json.loads(body)
-        var1 = float(data['var1'])
-        var2 = float(data['var2'])
-        print("Received variables: {var1}, {var2}")
+        data = {
+            'voltage1': voltage1,
+            'current1': current1,
+            'energy1': energy1,
+            'voltage2': voltage2,
+            'current2': current2,
+            'energy2': energy2,
+            'voltage3': voltage3,
+            'current3': current3,
+            'energy3': energy3
+        }
 
-        # Send a response
-        self.send_response(200)
-        self.send_header('Content-Type', 'application/json')
-        self.end_headers()
-        response = {'result1': var1 + 1.0, 'result2': var2 + 2.0}
-        self.wfile.write(json.dumps(response))
+        # Convert data to JSON format
+        json_data = json.dumps(data)
 
-# Start the HTTP server
-server = BaseHTTPServer.HTTPServer(('', 8000), MyHandler)
-print('Server running on localhost:8000...')
-server.serve_forever()
+        # Send the data to the server
+        conn = httplib.HTTPConnection('192.168.43.244', 5000)
+        headers = {'Content-type': 'application/json'}
+        conn.request('POST', '/receive_data', json_data, headers)
+        response = conn.getresponse()
+
+        if response.status == 200:
+            print('Data sent successfully')
+        else:
+            print('Failed to send data')
+
+        conn.close()
+
+        time.sleep(5)  # Delay for 5 seconds before sending the next data
+
+if __name__ == '__main__':
+    send_data()
