@@ -8,6 +8,7 @@ current1 = None
 energy1 = None
 class RequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
+        global voltage1, current1, energy1
         content_length = int(self.headers['Content-Length'])
         data = self.rfile.read(content_length)
         json_data = json.loads(data)
@@ -28,6 +29,7 @@ def run_server():
     httpd.serve_forever()
 
 def send_data():
+    global voltage1, current1, energy1
     while True:
         # Generate random data
         # voltage1 = random.randint(220, 240)
