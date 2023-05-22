@@ -104,7 +104,7 @@ def send_data():
 
         conn.close()
 
-        time.sleep(2)  # Delay for 5 seconds before sending the next data
+        time.sleep(1)  # Delay for 5 seconds before sending the next data
 
 
 if __name__ == '__main__':
