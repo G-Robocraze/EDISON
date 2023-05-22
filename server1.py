@@ -72,8 +72,8 @@ class RequestHandler(BaseHTTPRequestHandler):
                 if priority_load:
                     next_priorities.append(priority_load)
             print("Next priorities:", next_priorities)
-            self.priority_list.extend(next_priorities)
-            print("Updated priority list:", self.priority_list)
+            priority_list.extend(next_priorities)
+            print("Updated priority list:", priority_list)
 
 
         self.send_response(200)
