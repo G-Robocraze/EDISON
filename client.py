@@ -13,7 +13,7 @@ def select_least_priority(priority_list):
 try:
     with open('priority_list.pickle', 'rb') as file:
         priority_list = pickle.load(file)
-except FileNotFoundError:
+except IOError:
     priority_list = []
 
 # Example usage
