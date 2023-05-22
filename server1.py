@@ -3,12 +3,15 @@ import time
 import httplib
 import json
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
+
 voltage1 = 0
 current1 = 0
 energy1 = 0
 voltage2 = 0
 current2 = 0
 energy2 = 0
+relay_state = 0
+
 class RequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         global voltage1, current1, energy1, voltage2, current2, energy2
@@ -24,10 +27,20 @@ class RequestHandler(BaseHTTPRequestHandler):
             voltage2 = json_data.get('voltage')
             current2 = json_data.get('current')
             energy2 = json_data.get('power')
+        elif json_data.get('id') == 'relay':
+            relay_state = json_data.get('state')
         self.send_response(200)
         self.send_header('Content-type', 'text/plain')
         self.end_headers()
-        #self.wfile.write('Data received successfully')
+
+    def do_GET(self):
+        global relay_state
+        if self.path == '/endpoint/state':
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            response_data = {'state': relay_state}
+            self.wfile.write(json.dumps(response_data))
 
 def run_server():
     server_address = ('', 5000)
