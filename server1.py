@@ -48,7 +48,7 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.send_header('Content-type', 'application/json')
             self.end_headers()
             response_data = {'state': relay_state}
-            print(relay_state)
+            print(response_data)
             self.wfile.write(json.dumps(response_data))
 
 def run_server():
