@@ -35,7 +35,12 @@ class RequestHandler(BaseHTTPRequestHandler):
             current2 = json_data.get('current')
             energy2 = json_data.get('power')
         elif json_data.get('id') == 'relay':
-            relay_state = json_data.get('state')
+            relay_stage = json_data.get('state')
+            print(relay_state)
+            if relay_stage == "ON":
+                relay_state = 1
+            elif relay_stage =='OFF':
+                relay_stage == 0
         self.send_response(200)
         self.send_header('Content-type', 'text/plain')
         self.end_headers()
