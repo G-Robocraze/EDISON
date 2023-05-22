@@ -25,9 +25,9 @@ class RequestHandler(BaseHTTPRequestHandler):
             current2 = json_data.get('current')
             energy2 = json_data.get('power')
         self.send_response(200)
-        """ self.send_header('Content-type', 'text/plain')
+        self.send_header('Content-type', 'text/plain')
         self.end_headers()
-        self.wfile.write('Data received successfully') """
+        #self.wfile.write('Data received successfully')
 
 def run_server():
     server_address = ('', 5000)
