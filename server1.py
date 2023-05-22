@@ -49,7 +49,7 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.end_headers()
             response_data = {'state': relay_state}
             print(response_data)
-            self.wfile.write(json.dumps(response_data))
+            self.wfile.write(json.dumps(response_data).encode('utf-8'))
 
 def run_server():
     server_address = ('', 5000)
