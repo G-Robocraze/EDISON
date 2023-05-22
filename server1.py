@@ -3,12 +3,12 @@ import time
 import httplib
 import json
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-voltage1 = None
-current1 = None
-energy1 = None
-voltage2 = None
-current2 = None
-energy2 = None
+voltage1 = 0
+current1 = 0
+energy1 = 0
+voltage2 = 0
+current2 = 0
+energy2 = 0
 class RequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         global voltage1, current1, energy1, voltage2, current2, energy2
@@ -65,7 +65,7 @@ def send_data():
         json_data = json.dumps(data)
 
         # Send the data to the server
-        conn = httplib.HTTPConnection('192.168.43.244', 5000)
+        conn = httplib.HTTPConnection('10.0.0.143', 5000)
         headers = {'Content-type': 'application/json'}
         conn.request('POST', '/receive_data', json_data, headers)
         response = conn.getresponse()
