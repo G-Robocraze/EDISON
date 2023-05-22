@@ -17,11 +17,13 @@ energy1 = 0
 voltage2 = 0
 current2 = 0
 energy2 = 0
-relay_state = None
-
+relay_state1 = None
+relay_state2 = None
+relay_state3 = None
+relay_id = None
 class RequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
-        global voltage1, current1, energy1, voltage2, current2, energy2, relay_state
+        global voltage1, current1, energy1, voltage2, current2, energy2, relay_state1, relay_state2, relay_state3, relay_id
         content_length = int(self.headers['Content-Length'])
         data = self.rfile.read(content_length)
         json_data = json.loads(data)
@@ -34,25 +36,46 @@ class RequestHandler(BaseHTTPRequestHandler):
             voltage2 = json_data.get('voltage')
             current2 = json_data.get('current')
             energy2 = json_data.get('power')
-        elif json_data.get('id') == 'relay':
+        elif json_data.get('id') == 'relay1':
+            relay_stage = json_data.get('state')
+            print(relay_stage)
+            relay_id = 'relay1'
+            if relay_stage == "ON":
+                relay_state1 = 1
+            elif relay_stage =="OFF":
+                relay_state1 = 0
+        elif json_data.get('id') == 'relay2':
+            relay_id = 'relay2'
             relay_stage = json_data.get('state')
             print(relay_stage)
             if relay_stage == "ON":
-                relay_state = 1
+                relay_state2 = 1
             elif relay_stage =="OFF":
-                print("ok")
-                relay_state = 0
+                relay_state2 = 0
+        elif json_data.get('id') == 'relay3':
+            relay_id = 'relay3'
+            relay_stage = json_data.get('state')
+            print(relay_stage)
+            if relay_stage == "ON":
+                relay_state3 = 1
+            elif relay_stage =="OFF":
+                relay_state3 = 0
         self.send_response(200)
         self.send_header('Content-type', 'text/plain')
         self.end_headers()
 
     def do_GET(self):
-        global relay_state
+        global relay_state1, relay_state2, relay_state3, relay_id
         if self.path == '/endpoint/state':
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
-            response_data = {'state': relay_state}
+            if relay_id == 'relay1':
+                response_data = {'id' : 'relay1', 'state': relay_state1}
+            elif relay_id == 'relay2':
+                response_data = {'id' : 'relay2', 'state': relay_state2}
+            elif relay_id == 'relay1':
+                response_data = {'id' : 'relay3', 'state': relay_state3}
             print(response_data)
             self.wfile.write(json.dumps(response_data).encode('utf-8'))
 
