@@ -17,11 +17,11 @@ energy1 = 0
 voltage2 = 0
 current2 = 0
 energy2 = 0
-relay_state = 0
+relay_state = None
 
 class RequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
-        global voltage1, current1, energy1, voltage2, current2, energy2
+        global voltage1, current1, energy1, voltage2, current2, energy2, relay_state
         content_length = int(self.headers['Content-Length'])
         data = self.rfile.read(content_length)
         json_data = json.loads(data)
@@ -43,7 +43,6 @@ class RequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         global relay_state
         if self.path == '/endpoint/state':
-            relay_state=0
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
