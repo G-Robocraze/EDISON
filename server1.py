@@ -39,7 +39,7 @@ class RequestHandler(BaseHTTPRequestHandler):
             print(relay_state)
             if relay_stage == "ON":
                 relay_state = 1
-            elif relay_stage =='OFF':
+            elif relay_stage =="OFF":
                 relay_state == 0
         self.send_response(200)
         self.send_header('Content-type', 'text/plain')
