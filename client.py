@@ -1,33 +1,69 @@
 import pickle
-data =[]
-# Function to select the least priority item
-def select_least_priority(priority_list):
-    if priority_list:
-        least_priority_item = min(priority_list)
-        priority_list.remove(least_priority_item)
-        return least_priority_item
+
+# Function to update load priority and manage loads
+def manage_loads(load_priority, load_status, total_load, load_limit):
+    if total_load > load_limit:
+        # Turn off loads starting from the lowest priority until total load is below the limit
+        for load_id in load_priority:
+            if load_status[load_id] == "ON":
+                load_status[load_id] = "OFF"
+                total_load -= load_id
+                if total_load <= load_limit:
+                    break
     else:
-        return None
+        # Turn on loads starting from the highest priority until total load is below the limit
+        for load_id in reversed(load_priority):
+            if load_status[load_id] == "OFF":
+                load_status[load_id] = "ON"
+                total_load += load_id
+                if total_load >= load_limit:
+                    break
 
-# Load the priority list from file (if exists)
+    return total_load
+
+# Load the load priority and load status dictionaries from file (if exist)
 try:
-    with open('priority_list.pickle', 'rb') as file:
-        pickle.dump(data, file)
-        priority_list = pickle.load(file)
+    with open('load_priority.pickle', 'rb') as file:
+        load_priority = pickle.load(file)
+    with open('load_status.pickle', 'rb') as file:
+        load_status = pickle.load(file)
 except IOError:
-    priority_list = []
+    load_priority = []
+    load_status = {}
 
-# Example usage
-print("Current priority list:", priority_list)
+# Example initialization (you can modify this according to your requirements)
+load_priority = [1, 2, 3, 4, 5]  # Update with your load priorities
+load_status = {1: "ON", 2: "ON", 3: "ON", 4: "ON", 5: "ON"}  # Update with your load statuses
+total_load = sum(load_priority)
+load_limit = 10  # Update with your load limit
+
+print("Current load status:", load_status)
 
 while True:
-    choice = raw_input("Enter an item to add to the priority list (or 'q' to quit): ")
-    if choice == 'q':
+    choice = raw_input("Enter 'u' to update load priority, 'q' to quit, or any other key to simulate load change: ")
+
+    if choice == 'u':
+        # Update load priority
+        load_priority = []
+        for _ in range(len(load_status)):
+            load_id = int(raw_input("Enter load ID: "))
+            load_priority.append(load_id)
+
+        # Save the updated load priority to file
+        with open('load_priority.pickle', 'wb') as file:
+            pickle.dump(load_priority, file)
+
+        print("Updated load priority:", load_priority)
+
+    elif choice == 'q':
         break
-    priority_list.append(choice)
 
-print("Selected least priority item:", select_least_priority(priority_list))
+    else:
+        # Simulate load change
+        total_load = manage_loads(load_priority, load_status, total_load, load_limit)
+        print("Current load status:", load_status)
+        print("Total load:", total_load)
 
-# Save the updated priority list to file
-with open('priority_list.pickle', 'wb') as file:
-    pickle.dump(priority_list, file)
+# Save the load status dictionary to file
+with open('load_status.pickle', 'wb') as file:
+    pickle.dump(load_status, file)
