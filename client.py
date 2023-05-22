@@ -1,5 +1,5 @@
 import pickle
-
+data =[]
 # Function to select the least priority item
 def select_least_priority(priority_list):
     if priority_list:
@@ -12,6 +12,7 @@ def select_least_priority(priority_list):
 # Load the priority list from file (if exists)
 try:
     with open('priority_list.pickle', 'rb') as file:
+        pickle.dump(data, file)
         priority_list = pickle.load(file)
 except IOError:
     priority_list = []
