@@ -3,7 +3,7 @@ import time
 import httplib
 import json
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-import MySQLdb
+#import MySQLdb
 
 # Database connection details
 db_host = 'localhost'
@@ -43,7 +43,7 @@ class RequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         global relay_state
         if self.path == '/endpoint/state':
-            relay_state=get_relay_state()
+            relay_state=1
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
@@ -100,21 +100,6 @@ def send_data():
 
         time.sleep(5)  # Delay for 5 seconds before sending the next data
 
-def get_relay_state():
-    try:
-        db = MySQLdb.connect(host=db_host, user=db_user, passwd=db_password, db=db_name)
-        cursor = db.cursor()
-        query = "SELECT state FROM loads WHERE Load_id=%s"
-        cursor.execute(query, ('load1'))
-        result = cursor.fetchone()
-        db.close()
-        if result=='ON':
-            return 1
-        else:
-            return 0
-    except Exception as e:
-        print('Failed to fetch relay state:', e)
-        return 'Unknown'
 
 if __name__ == '__main__':
     # Start the server in a separate thread
