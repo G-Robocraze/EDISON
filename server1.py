@@ -141,7 +141,6 @@ def manage_loads():
     print(total_energy)
     def cut_load(index):
         load_id = priority_list[index]
-
         if load_id == 'load1' and relay_state1 == 1:
             relay_state1 = 0
             print("Turning off load1 (priority {})".format(index + 1))
