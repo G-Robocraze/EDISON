@@ -3,13 +3,6 @@ import time
 import httplib
 import json
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-#import MySQLdb
-
-# Database connection details
-db_host = 'localhost'
-db_user = 'root'
-db_password = 'Gsw@1924'
-db_name = 'esamproject'
 
 voltage1 = 0
 current1 = 0
@@ -24,13 +17,17 @@ relay_state1 = None
 relay_state2 = None
 relay_state3 = None
 relay_id = None
+priority_list = []  # Priority list to be updated from Flask server
+energy_limit = 1000  # Set your desired energy limit here
+
 class RequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
-        global voltage1, current1, energy1, voltage2, current2, energy2, voltage3, current3, energy3, relay_state1, relay_state2, relay_state3, relay_id
+        global voltage1, current1, energy1, voltage2, current2, energy2, voltage3, current3, energy3, relay_state1, relay_state2, relay_state3, relay_id, priority_list
         content_length = int(self.headers['Content-Length'])
         data = self.rfile.read(content_length)
         json_data = json.loads(data)
         print(json_data)  # Process the received JSON data as desired
+
         if json_data.get('id') == 'load1':
             voltage1 = json_data.get('voltage')
             current1 = json_data.get('current')
@@ -49,7 +46,7 @@ class RequestHandler(BaseHTTPRequestHandler):
             relay_id = 'relay1'
             if relay_stage == "ON":
                 relay_state1 = 1
-            elif relay_stage =="OFF":
+            elif relay_stage == "OFF":
                 relay_state1 = 0
         elif json_data.get('id') == 'relay2':
             relay_id = 'relay2'
@@ -57,7 +54,7 @@ class RequestHandler(BaseHTTPRequestHandler):
             print(relay_stage)
             if relay_stage == "ON":
                 relay_state2 = 1
-            elif relay_stage =="OFF":
+            elif relay_stage == "OFF":
                 relay_state2 = 0
         elif json_data.get('id') == 'relay3':
             relay_id = 'relay3'
@@ -65,8 +62,20 @@ class RequestHandler(BaseHTTPRequestHandler):
             print(relay_stage)
             if relay_stage == "ON":
                 relay_state3 = 1
-            elif relay_stage =="OFF":
+            elif relay_stage == "OFF":
                 relay_state3 = 0
+        elif json_data.get('id') == 'priority_list':
+            next_priorities = []
+            for i in range(1, len(json_data)):
+                priority_key = 'priority_' + str(i)
+                priority_load = json_data.get(priority_key)
+                if priority_load:
+                    next_priorities.append(priority_load)
+            print("Next priorities:", next_priorities)
+            self.priority_list.extend(next_priorities)
+            print("Updated priority list:", self.priority_list)
+
+
         self.send_response(200)
         self.send_header('Content-type', 'text/plain')
         self.end_headers()
@@ -78,11 +87,11 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.send_header('Content-type', 'application/json')
             self.end_headers()
             if relay_id == 'relay1':
-                response_data = {'id' : 'relay1', 'state': relay_state1}
+                response_data = {'id': 'relay1', 'state': relay_state1}
             elif relay_id == 'relay2':
-                response_data = {'id' : 'relay2', 'state': relay_state2}
+                response_data = {'id': 'relay2', 'state': relay_state2}
             elif relay_id == 'relay3':
-                response_data = {'id' : 'relay3', 'state': relay_state3}
+                response_data = {'id': 'relay3', 'state': relay_state3}
             print(response_data)
             self.wfile.write(json.dumps(response_data).encode('utf-8'))
 
@@ -123,7 +132,42 @@ def send_data():
 
         conn.close()
 
-        time.sleep(1)  # Delay for 5 seconds before sending the next data
+        time.sleep(1)  # Delay for 1 second before sending the next data
+
+def manage_loads():
+    global energy_limit, priority_list, relay_state1, relay_state2, relay_state3
+    total_energy = energy1 + energy2 + energy3
+
+    def cut_load(index):
+        load_id = priority_list[index]
+
+        if load_id == 'load1' and relay_state1 == 1:
+            relay_state1 = 0
+            print("Turning off load1 (priority {})".format(index + 1))
+        elif load_id == 'load2' and relay_state2 == 1:
+            relay_state2 = 0
+            print("Turning off load2 (priority {})".format(index + 1))
+        elif load_id == 'load3' and relay_state3 == 1:
+            relay_state3 = 0
+            print("Turning off load3 (priority {})".format(index + 1))
+
+    def check_loads(current_index):
+        if current_index < len(priority_list):
+            cut_load(current_index)
+
+            # Check if total energy gradually decreases below the limit
+            while energy1 + energy2 + energy3 > energy_limit:
+                time.sleep(1)  # Wait for 1 second before checking again
+
+            # Check the next priority load
+            check_loads(current_index + 1)
+
+    if total_energy > energy_limit:
+        # Start checking the priority loads
+        check_loads(0)
+
+    time.sleep(1)  # Delay for 1 second before checking again
+    manage_loads()  # Recursively call the function to continue monitoring and managing the loads
 
 
 if __name__ == '__main__':
@@ -134,4 +178,14 @@ if __name__ == '__main__':
     server_thread.start()
 
     # Start sending data
-    send_data()
+    send_data_thread = threading.Thread(target=send_data)
+    send_data_thread.daemon = True
+    send_data_thread.start()
+
+    # Start load management
+    manage_loads_thread = threading.Thread(target=manage_loads)
+    manage_loads_thread.daemon = True
+    manage_loads_thread.start()
+
+    while True:
+        time.sleep(1)
