@@ -126,7 +126,8 @@ def send_data():
         response = conn.getresponse()
 
         if response.status == 200:
-            print('Data sent successfully')
+            #print('Data sent successfully')
+            flag=0
         else:
             print('Failed to send data')
 
@@ -137,7 +138,7 @@ def send_data():
 def manage_loads():
     global energy_limit, priority_list, relay_state1, relay_state2, relay_state3
     total_energy = energy1 + energy2 + energy3
-
+    print(total_energy)
     def cut_load(index):
         load_id = priority_list[index]
 
