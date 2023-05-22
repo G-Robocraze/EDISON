@@ -21,12 +21,7 @@ priority_list = []  # Priority list to be updated from Flask server
 energy_limit = 1000  # Set your desired energy limit here
 
 class RequestHandler(BaseHTTPRequestHandler):
-    def __init__(self, *args, **kwargs):
-        self.priority_list = []
-        super(RequestHandler, self).__init__(*args, **kwargs)
     def do_POST(self):
-        next_priorities = ['load1', 'load2', 'load3']
-        self.priority_list.extend(next_priorities)
         global voltage1, current1, energy1, voltage2, current2, energy2, voltage3, current3, energy3, relay_state1, relay_state2, relay_state3, relay_id, priority_list
         content_length = int(self.headers['Content-Length'])
         data = self.rfile.read(content_length)
