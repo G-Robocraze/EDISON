@@ -1,13 +1,32 @@
-import json
-import requests
+import pickle
 
-# Send the two variables to the server
-url = 'http://192.168.43.67:8000'  # Change this to the address of your server
-data = {'var1': 1.0, 'var2': 2.0}
-response = requests.post(url, json=data)
+# Function to select the least priority item
+def select_least_priority(priority_list):
+    if priority_list:
+        least_priority_item = min(priority_list)
+        priority_list.remove(least_priority_item)
+        return least_priority_item
+    else:
+        return None
 
-# Parse the response JSON
-result = json.loads(response.text)
-result1 = result.get('result1')
-result2 = result.get('result2')
-print(f"Received results: {result1}, {result2}")
+# Load the priority list from file (if exists)
+try:
+    with open('priority_list.pickle', 'rb') as file:
+        priority_list = pickle.load(file)
+except FileNotFoundError:
+    priority_list = []
+
+# Example usage
+print("Current priority list:", priority_list)
+
+while True:
+    choice = raw_input("Enter an item to add to the priority list (or 'q' to quit): ")
+    if choice == 'q':
+        break
+    priority_list.append(choice)
+
+print("Selected least priority item:", select_least_priority(priority_list))
+
+# Save the updated priority list to file
+with open('priority_list.pickle', 'wb') as file:
+    pickle.dump(priority_list, file)

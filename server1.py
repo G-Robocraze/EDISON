@@ -17,13 +17,16 @@ energy1 = 0
 voltage2 = 0
 current2 = 0
 energy2 = 0
+voltage3 = 0
+current3 = 0
+energy3 = 0
 relay_state1 = None
 relay_state2 = None
 relay_state3 = None
 relay_id = None
 class RequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
-        global voltage1, current1, energy1, voltage2, current2, energy2, relay_state1, relay_state2, relay_state3, relay_id
+        global voltage1, current1, energy1, voltage2, current2, energy2, voltage3, current3, energy3, relay_state1, relay_state2, relay_state3, relay_id
         content_length = int(self.headers['Content-Length'])
         data = self.rfile.read(content_length)
         json_data = json.loads(data)
@@ -36,6 +39,10 @@ class RequestHandler(BaseHTTPRequestHandler):
             voltage2 = json_data.get('voltage')
             current2 = json_data.get('current')
             energy2 = json_data.get('power')
+        elif json_data.get('id') == 'load3':
+            voltage3 = json_data.get('voltage')
+            current3 = json_data.get('current')
+            energy3 = json_data.get('power')
         elif json_data.get('id') == 'relay1':
             relay_stage = json_data.get('state')
             print(relay_stage)
@@ -86,19 +93,8 @@ def run_server():
     httpd.serve_forever()
 
 def send_data():
-    global voltage1, current1, energy1, voltage2, current2, energy2
+    global voltage1, current1, energy1, voltage2, current2, energy2, voltage3, current3, energy3
     while True:
-        # Generate random data
-        # voltage1 = random.randint(220, 240)
-        # current1 = random.randint(1, 10)
-        # energy1 = voltage1 * current1
-        # voltage2 = random.randint(220, 240)
-        # current2 = random.randint(1, 10)
-        # energy2 = voltage2 * current2
-        voltage3 = random.randint(220, 240)
-        current3 = random.randint(1, 10)
-        energy3 = voltage3 * current3
-
         data = {
             'voltage1': voltage1,
             'current1': current1,
