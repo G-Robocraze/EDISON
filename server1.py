@@ -43,7 +43,7 @@ class RequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         global relay_state
         if self.path == '/endpoint/state':
-            relay_state=1
+            relay_state=0
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
