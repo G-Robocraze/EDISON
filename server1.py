@@ -17,6 +17,9 @@ relay_state1 = None
 relay_state2 = None
 relay_state3 = None
 relay_id = None
+load_a =0
+load_b =0
+load_c = 0
 priority_list = []  # Priority list to be updated from Flask server
 energy_limit = 1000  # Set your desired energy limit here
 
@@ -40,6 +43,9 @@ class RequestHandler(BaseHTTPRequestHandler):
             voltage3 = json_data.get('voltage')
             current3 = json_data.get('current')
             energy3 = json_data.get('power')
+        elif json_data.get('id') == 'mode':
+            operation_mode = json_data.get('mode')
+            print(operation_mode)
         elif json_data.get('id') == 'relay1':
             relay_stage = json_data.get('state')
             print(relay_stage)
@@ -137,39 +143,61 @@ def send_data():
         time.sleep(1)  # Delay for 1 second before sending the next data
 
 def manage_loads():
-    global energy_limit, priority_list, relay_state1, relay_state2, relay_state3
-    total_energy = energy1 + energy2 + energy3
-    print(total_energy)
-    def cut_load(index):
-        load_id = priority_list[index]
+    global energy_limit, priority_list, relay_state1, relay_state2, relay_state3, load_a, load_b, energy1, energy2, energy3
+
+    def cut_load(load_id):
+        global relay_state1, relay_state2, relay_state3, load_a, load_b, load_c
+
         if load_id == 'load1' and relay_state1 == 1:
             relay_state1 = 0
-            print("Turning off load1 (priority {})".format(index + 1))
+            load_a = energy1
+            print("Turning off load1")
         elif load_id == 'load2' and relay_state2 == 1:
             relay_state2 = 0
-            print("Turning off load2 (priority {})".format(index + 1))
+            load_b = energy2
+            print("Turning off load2")
         elif load_id == 'load3' and relay_state3 == 1:
             relay_state3 = 0
-            print("Turning off load3 (priority {})".format(index + 1))
+            load_c = energy3
+            print("Turning off load3")
 
-    def check_loads(current_index):
-        if current_index < len(priority_list):
-            cut_load(current_index)
+    def activate_load(load_id):
+        global relay_state1, relay_state2, relay_state3, load_a, load_b
 
-            # Check if total energy gradually decreases below the limit
-            while energy1 + energy2 + energy3 > energy_limit:
-                time.sleep(1)  # Wait for 1 second before checking again
+        if load_id == 'load1' and relay_state1 == 0:
+            relay_state1 = 1
+            load_a = 0
+            print("Turning on load1")
+        elif load_id == 'load2' and relay_state2 == 0:
+            relay_state2 = 1
+            load_b = 0
+            print("Turning on load2")
+        elif load_id == 'load3' and relay_state3 == 0:
+            relay_state3 = 1
+            load_c = 0
+            print("Turning on load3")
 
-            # Check the next priority load
-            check_loads(current_index + 1)
+    while True:
+        LOAD_REDUCTION_AMOUNT = load_a + load_b + load_c
+        total_energy = energy1 + energy2 + energy3
 
-    if total_energy > energy_limit:
-        # Start checking the priority loads
-        check_loads(0)
+        if total_energy > energy_limit:
+            # Excess load detected, start shedding loads
+            for load_id in priority_list:
+                cut_load(load_id)
+                total_energy -= globals()['energy' + load_id[-1]]
 
-    time.sleep(1)  # Delay for 1 second before checking again
-    manage_loads()  # Recursively call the function to continue monitoring and managing the loads
+                if total_energy <= energy_limit:
+                    break
 
+        elif total_energy + LOAD_REDUCTION_AMOUNT <= energy_limit:
+            # Remaining load decreased by a certain amount, start restoring loads
+            for load_id in reversed(priority_list):
+                if globals()['energy' + load_id[-1]] <= energy_limit - total_energy:
+                    activate_load(load_id)
+                    total_energy += globals()['energy' + load_id[-1]]
+
+        time.sleep(1)  # Delay for 1 second before checking again
 
 if __name__ == '__main__':
     # Start the server in a separate thread
