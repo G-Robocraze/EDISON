@@ -96,10 +96,13 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.end_headers()
             if relay_id == 'relay1':
                 response_data = {'id': 'relay1', 'state': relay_state1}
+                print(response_data)
             elif relay_id == 'relay2':
                 response_data = {'id': 'relay2', 'state': relay_state2}
+                print(response_data)
             elif relay_id == 'relay3':
                 response_data = {'id': 'relay3', 'state': relay_state3}
+                print(response_data)
             #print(response_data)
             self.wfile.write(json.dumps(response_data).encode('utf-8'))
 
