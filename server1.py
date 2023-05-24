@@ -17,9 +17,9 @@ relay_state1 = 1
 relay_state2 = 1
 relay_state3 = 1
 relay_id = None
-load_a =0
-load_b =0
-load_c = 0
+load_1 =0
+load_2 =0
+load_3 = 0
 operation_mode = 'Manual'
 priority_list = []  # Priority list to be updated from Flask server
 energy_limit = 300  # Set your desired energy limit here
@@ -142,45 +142,46 @@ def send_data():
         time.sleep(1)  # Delay for 1 second before sending the next data
 
 def manage_loads():
-    global energy_limit, priority_list, relay_state1, relay_state2, relay_state3, load_a, load_b, energy1, energy2, energy3, operation_mode
+    global energy_limit, priority_list, relay_state1, relay_state2, relay_state3, load_1, load_2,load_3, energy1, energy2, energy3, operation_mode
 
     def cut_load(load_id):
-        global relay_state1, relay_state2, relay_state3, load_a, load_b, load_c
+        global relay_state1, relay_state2, relay_state3, load_1, load_2, load_3
 
         if load_id == 'load1' and relay_state1 == 1:
             relay_state1 = 0
-            load_a = energy1
+            load_1 = energy1
             print("Turning off load1")
         elif load_id == 'load2' and relay_state2 == 1:
             relay_state2 = 0
-            load_b = energy2
+            load_2 = energy2
             print("Turning off load2")
         elif load_id == 'load3' and relay_state3 == 1:
             relay_state3 = 0
-            load_c = energy3
+            load_3 = energy3
             print("Turning off load3")
 
     def activate_load(load_id):
-        global relay_state1, relay_state2, relay_state3, load_a, load_b, load_c
+        global relay_state1, relay_state2, relay_state3, load_1, load_2, load_3
 
         if load_id == 'load1' and relay_state1 == 0:
             relay_state1 = 1
-            load_a = 0
+            load_1 = 0
             print("Turning on load1")
         elif load_id == 'load2' and relay_state2 == 0:
             relay_state2 = 1
-            load_b = 0
+            load_2 = 0
             print("Turning on load2")
         elif load_id == 'load3' and relay_state3 == 0:
             relay_state3 = 1
-            load_c = 0
+            load_3 = 0
             print("Turning on load3")
 
     while True:
         if operation_mode == 'Auto':
             print("Auto operation started")    
-            LOAD_REDUCTION_AMOUNT = load_a + load_b + load_c
+            LOAD_REDUCTION_AMOUNT = load_1 + load_2 + load_3
             total_energy = energy1 + energy2 + energy3
+            print("total_energy: ", total_energy )
 
             if total_energy > energy_limit:
                 # Excess load detected, start shedding loads
@@ -197,6 +198,15 @@ def manage_loads():
                     if globals()['energy' + load_id[-1]] <= energy_limit - total_energy:
                         activate_load(load_id)
                         total_energy += globals()['energy' + load_id[-1]]
+            if total_energy+load_1 <= energy_limit:
+                activate_load('load1')
+                print("Activating Load1")
+            if total_energy+load_2 <= energy_limit:
+                activate_load('load2')
+                print("Activating Load2")
+            if total_energy+load_3 <= energy_limit:
+                activate_load('load3')
+                print("Activating Load3")
 
             time.sleep(1)  # Delay for 1 second before checking again
 
