@@ -13,9 +13,9 @@ energy2 = 0
 voltage3 = 0
 current3 = 0
 energy3 = 0
-relay_state1 = None
-relay_state2 = None
-relay_state3 = None
+relay_state1 = 1
+relay_state2 = 1
+relay_state3 = 1
 relay_id = None
 load_a =0
 load_b =0
@@ -30,7 +30,7 @@ class RequestHandler(BaseHTTPRequestHandler):
         content_length = int(self.headers['Content-Length'])
         data = self.rfile.read(content_length)
         json_data = json.loads(data)
-        print(json_data)  # Process the received JSON data as desired
+        #print(json_data)  # Process the received JSON data as desired
 
         if json_data.get('id') == 'load1':
             voltage1 = json_data.get('voltage')
@@ -58,7 +58,7 @@ class RequestHandler(BaseHTTPRequestHandler):
         elif json_data.get('id') == 'relay2':
             relay_id = 'relay2'
             relay_stage = json_data.get('state')
-            print(relay_stage)
+            #print(relay_stage)
             if relay_stage == "ON":
                 relay_state2 = 1
             elif relay_stage == "OFF":
@@ -66,7 +66,7 @@ class RequestHandler(BaseHTTPRequestHandler):
         elif json_data.get('id') == 'relay3':
             relay_id = 'relay3'
             relay_stage = json_data.get('state')
-            print(relay_stage)
+            #print(relay_stage)
             if relay_stage == "ON":
                 relay_state3 = 1
             elif relay_stage == "OFF":
@@ -78,9 +78,9 @@ class RequestHandler(BaseHTTPRequestHandler):
                 priority_load = json_data.get(priority_key)
                 if priority_load:
                     next_priorities.append(priority_load)
-            print("Next priorities:", next_priorities)
+            #print("Next priorities:", next_priorities)
             priority_list.extend(next_priorities)
-            print("Updated priority list:", priority_list)
+            #print("Updated priority list:", priority_list)
 
 
         self.send_response(200)
@@ -100,7 +100,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                 response_data = {'id': 'relay2', 'state': relay_state2}
             elif relay_id == 'relay3':
                 response_data = {'id': 'relay3', 'state': relay_state3}
-            print(response_data)
+            #print(response_data)
             self.wfile.write(json.dumps(response_data).encode('utf-8'))
 
 def run_server():
@@ -179,7 +179,8 @@ def manage_loads():
             print("Turning on load3")
 
     while True:
-        if operation_mode == 'Auto':    
+        if operation_mode == 'Auto':
+            print("Auto operation started")    
             LOAD_REDUCTION_AMOUNT = load_a + load_b + load_c
             total_energy = energy1 + energy2 + energy3
 
