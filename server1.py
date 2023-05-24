@@ -21,7 +21,7 @@ load_1 =0
 load_2 =0
 load_3 = 0
 operation_mode = 'Manual'
-priority_list = []  # Priority list to be updated from Flask server
+priority_list = ['load1','load2','load3']  # Priority list to be updated from Flask server
 energy_limit = 300  # Set your desired energy limit here
 
 class RequestHandler(BaseHTTPRequestHandler):
@@ -188,6 +188,7 @@ def manage_loads():
                 for load_id in reversed(priority_list):
                     cut_load(load_id)
                     total_energy -= globals()['energy' + load_id[-1]]
+                    time.sleep(1)
 
                     if total_energy <= energy_limit:
                         break
