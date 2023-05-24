@@ -194,7 +194,7 @@ def manage_loads():
 
             elif total_energy + LOAD_REDUCTION_AMOUNT <= energy_limit:
                 # Remaining load decreased by a certain amount, start restoring loads
-                for load_id in reversed(priority_list):
+                for load_id in (priority_list):
                     if globals()['energy' + load_id[-1]] <= energy_limit - total_energy:
                         activate_load(load_id)
                         total_energy += globals()['energy' + load_id[-1]]
@@ -208,7 +208,7 @@ def manage_loads():
                 activate_load('load3')
                 print("Activating Load3")
 
-            time.sleep(1)  # Delay for 1 second before checking again
+            time.sleep(3)  # Delay for 1 second before checking again
 
 if __name__ == '__main__':
     # Start the server in a separate thread
