@@ -177,13 +177,13 @@ def manage_loads():
             print("Turning on load3")
 
     while True:
-        if operation_mode == 'Auto':
-            print("Auto operation started")    
+        if operation_mode == 'Auto':    
             LOAD_REDUCTION_AMOUNT = load_1 + load_2 + load_3
             total_energy = energy1 + energy2 + energy3
             print("total_energy: ", total_energy )
 
             if total_energy > energy_limit:
+                print("Auto operation started")
                 # Excess load detected, start shedding loads
                 for load_id in reversed(priority_list):
                     cut_load(load_id)
@@ -199,6 +199,7 @@ def manage_loads():
                     if globals()['energy' + load_id[-1]] <= energy_limit - total_energy:
                         activate_load(load_id)
                         total_energy += globals()['energy' + load_id[-1]]
+            print(load_1 ,':', load_2,':', load_3)
             if total_energy+load_1 <= energy_limit:
                 activate_load('load1')
                 print("Activating Load1")
