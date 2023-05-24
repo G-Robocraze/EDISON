@@ -185,7 +185,7 @@ def manage_loads():
 
             if total_energy > energy_limit:
                 # Excess load detected, start shedding loads
-                for load_id in priority_list:
+                for load_id in reversed(priority_list):
                     cut_load(load_id)
                     total_energy -= globals()['energy' + load_id[-1]]
 
