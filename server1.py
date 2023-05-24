@@ -20,12 +20,13 @@ relay_id = None
 load_a =0
 load_b =0
 load_c = 0
+operation_mode = 'Manual'
 priority_list = []  # Priority list to be updated from Flask server
 energy_limit = 1000  # Set your desired energy limit here
 
 class RequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
-        global voltage1, current1, energy1, voltage2, current2, energy2, voltage3, current3, energy3, relay_state1, relay_state2, relay_state3, relay_id, priority_list
+        global voltage1, current1, energy1, voltage2, current2, energy2, voltage3, current3, energy3, relay_state1, relay_state2, relay_state3, relay_id, priority_list, operation_mode
         content_length = int(self.headers['Content-Length'])
         data = self.rfile.read(content_length)
         json_data = json.loads(data)
@@ -143,7 +144,7 @@ def send_data():
         time.sleep(1)  # Delay for 1 second before sending the next data
 
 def manage_loads():
-    global energy_limit, priority_list, relay_state1, relay_state2, relay_state3, load_a, load_b, energy1, energy2, energy3
+    global energy_limit, priority_list, relay_state1, relay_state2, relay_state3, load_a, load_b, energy1, energy2, energy3, operation_mode
 
     def cut_load(load_id):
         global relay_state1, relay_state2, relay_state3, load_a, load_b, load_c
@@ -178,26 +179,27 @@ def manage_loads():
             print("Turning on load3")
 
     while True:
-        LOAD_REDUCTION_AMOUNT = load_a + load_b + load_c
-        total_energy = energy1 + energy2 + energy3
+        if operation_mode == 'Auto':    
+            LOAD_REDUCTION_AMOUNT = load_a + load_b + load_c
+            total_energy = energy1 + energy2 + energy3
 
-        if total_energy > energy_limit:
-            # Excess load detected, start shedding loads
-            for load_id in priority_list:
-                cut_load(load_id)
-                total_energy -= globals()['energy' + load_id[-1]]
+            if total_energy > energy_limit:
+                # Excess load detected, start shedding loads
+                for load_id in priority_list:
+                    cut_load(load_id)
+                    total_energy -= globals()['energy' + load_id[-1]]
 
-                if total_energy <= energy_limit:
-                    break
+                    if total_energy <= energy_limit:
+                        break
 
-        elif total_energy + LOAD_REDUCTION_AMOUNT <= energy_limit:
-            # Remaining load decreased by a certain amount, start restoring loads
-            for load_id in reversed(priority_list):
-                if globals()['energy' + load_id[-1]] <= energy_limit - total_energy:
-                    activate_load(load_id)
-                    total_energy += globals()['energy' + load_id[-1]]
+            elif total_energy + LOAD_REDUCTION_AMOUNT <= energy_limit:
+                # Remaining load decreased by a certain amount, start restoring loads
+                for load_id in reversed(priority_list):
+                    if globals()['energy' + load_id[-1]] <= energy_limit - total_energy:
+                        activate_load(load_id)
+                        total_energy += globals()['energy' + load_id[-1]]
 
-        time.sleep(1)  # Delay for 1 second before checking again
+            time.sleep(1)  # Delay for 1 second before checking again
 
 if __name__ == '__main__':
     # Start the server in a separate thread
