@@ -90,19 +90,15 @@ class RequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         global relay_state1, relay_state2, relay_state3, relay_id
         if self.path == '/endpoint/state':
-            response_data = {}
+            response_data = {
+                'relay1': relay_state1,
+                'relay2': relay_state2,
+                'relay3': relay_state3
+            }
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
-            response_data = {'id': 'relay1', 'state': relay_state1}
-            print(response_data)
-            self.wfile.write(json.dumps(response_data).encode('utf-8'))
-            response_data = {'id': 'relay2', 'state': relay_state2}
-            print(response_data)
-            self.wfile.write(json.dumps(response_data).encode('utf-8'))
-            response_data = {'id': 'relay3', 'state': relay_state3}
-            print(response_data)
-            #print(response_data)
+            
             self.wfile.write(json.dumps(response_data).encode('utf-8'))
 
 def run_server():
