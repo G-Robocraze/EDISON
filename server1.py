@@ -22,7 +22,7 @@ load_b =0
 load_c = 0
 operation_mode = 'Manual'
 priority_list = []  # Priority list to be updated from Flask server
-energy_limit = 1000  # Set your desired energy limit here
+energy_limit = 200  # Set your desired energy limit here
 
 class RequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
@@ -161,7 +161,7 @@ def manage_loads():
             print("Turning off load3")
 
     def activate_load(load_id):
-        global relay_state1, relay_state2, relay_state3, load_a, load_b
+        global relay_state1, relay_state2, relay_state3, load_a, load_b, load_c
 
         if load_id == 'load1' and relay_state1 == 0:
             relay_state1 = 1
