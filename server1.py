@@ -27,6 +27,15 @@ energy_limit = 300  # Set your desired energy limit here
 class RequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         global voltage1, current1, energy1, voltage2, current2, energy2, voltage3, current3, energy3, relay_state1, relay_state2, relay_state3, relay_id, priority_list, operation_mode
+        voltage1 = 0
+        current1 = 0
+        energy1 = 0
+        voltage2 = 0
+        current2 = 0
+        energy2 = 0
+        voltage3 = 0
+        current3 = 0
+        energy3 = 0
         content_length = int(self.headers['Content-Length'])
         data = self.rfile.read(content_length)
         json_data = json.loads(data)
