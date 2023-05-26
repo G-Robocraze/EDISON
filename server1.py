@@ -188,7 +188,7 @@ def manage_loads():
                 for load_id in reversed(priority_list):
                     cut_load(load_id)
                     total_energy -= globals()['energy' + load_id[-1]]
-                    time.sleep(2)
+                    time.sleep(1)
 
                     if total_energy <= energy_limit:
                         break
@@ -203,17 +203,17 @@ def manage_loads():
             if total_energy+load_1 <= energy_limit:
                 activate_load('load1')
                 print("Activating Load1")
-                time.sleep(2)
+                time.sleep(1)
             if total_energy+load_2 <= energy_limit:
                 activate_load('load2')
                 print("Activating Load2")
-                time.sleep(2)
+                time.sleep(1)
             if total_energy+load_3 <= energy_limit:
                 activate_load('load3')
                 print("Activating Load3")
-                time.sleep(2)
+                time.sleep(1)
 
-            time.sleep(3)  # Delay for 1 second before checking again
+            time.sleep(1)  # Delay for 1 second before checking again
 
 if __name__ == '__main__':
     # Start the server in a separate thread
