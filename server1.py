@@ -22,7 +22,7 @@ load_2 =0
 load_3 = 0
 operation_mode = 'Manual'
 priority_list = ['load1','load2','load3']  # Priority list to be updated from Flask server
-energy_limit = 700  # Set your desired energy limit here
+energy_limit = 200  # Set your desired energy limit here
 
 class RequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
